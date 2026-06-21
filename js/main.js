@@ -4,6 +4,7 @@
  */
 
 const STORAGE_KEY = 'gundam-price-compare-view';
+const THEME_KEY = 'gundam-price-compare-theme';
 
 const state = {
   view: 'grid',       // 'grid' | 'list'
@@ -17,7 +18,8 @@ const els = {
   search: document.getElementById('search'),
   sort: document.getElementById('sort'),
   viewGrid: document.getElementById('view-grid'),
-  viewList: document.getElementById('view-list')
+  viewList: document.getElementById('view-list'),
+  themeToggle: document.getElementById('theme-toggle')
 };
 
 // DOM 載入完成後執行
@@ -26,13 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function init() {
+  initTheme();
   const savedView = getStorage(STORAGE_KEY, 'grid');
   setView(savedView);
   attachListeners();
   render();
 }
 
+function initTheme() {
+  const isDark = document.documentElement.classList.contains('dark');
+  updateThemeButton(isDark);
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  setStorage(THEME_KEY, isDark ? 'dark' : 'light');
+  updateThemeButton(isDark);
+}
+
+function updateThemeButton(isDark) {
+  if (!els.themeToggle) return;
+  els.themeToggle.textContent = isDark ? '☀️' : '🌙';
+  els.themeToggle.setAttribute('aria-label', isDark ? '切換淺色模式' : '切換深色模式');
+}
+
 function attachListeners() {
+  if (els.themeToggle) {
+    els.themeToggle.addEventListener('click', toggleTheme);
+  }
+
   els.search.addEventListener('input', debounce((e) => {
     state.search = e.target.value.trim();
     render();

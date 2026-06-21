@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>鋼彈卡牌比價</title>
   <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      const key = 'gundam-price-compare-theme';
+      const saved = localStorage.getItem(key);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    })();
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -32,6 +41,8 @@
         <button id="view-grid" class="view-btn is-active" type="button" aria-pressed="true">網格</button>
         <button id="view-list" class="view-btn" type="button" aria-pressed="false">列表</button>
       </div>
+
+      <button id="theme-toggle" class="theme-btn" type="button" aria-label="切換深色模式">🌙</button>
     </section>
 
     <section id="results" class="results grid-view" aria-live="polite" aria-label="比價結果">
