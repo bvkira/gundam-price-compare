@@ -20,7 +20,8 @@
 │   └── prices.json         # 從 yuyu-tei 抓取的價格資料庫
 ├── scripts/
 │   ├── build_card_data.pl  # 從官網抓取卡牌資料的 Perl 腳本
-│   └── scrape_yuyutei.pl   # 從 yuyu-tei 抓取價格的 Perl 腳本
+│   ├── scrape_yuyutei.pl   # 從 yuyu-tei 抓取價格的 Perl 腳本
+│   └── merge_prices.pl     # 把 yuyu-tei 價格同步到 js/data.js
 ├── README.md               # 本文件
 └── .gitignore              # Git 忽略清單
 ```
@@ -32,6 +33,7 @@
 - 系列篩選下拉選單。
 - 依最低價低到高或高到低排序。
 - 每張卡顯示 Yuyu-tei / B店 / C店 價格，並以綠色凸顯最低價。
+- 價格預設為日圓（JPY），訪客可切換為港幣（HKD）。
 - 顯示官方卡牌圖片。
 - 深色 / 淺色模式切換。
 

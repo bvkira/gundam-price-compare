@@ -5,12 +5,25 @@
 
 const STORAGE_KEY = 'gundam-price-compare-view';
 const THEME_KEY = 'gundam-price-compare-theme';
+const CURRENCY_KEY = 'gundam-price-compare-currency';
+
+// 預設匯率（JPY 為基準），會在頁面載入時嘗試更新
+const EXCHANGE_RATES = {
+  JPY: 1,
+  HKD: 0.0486
+};
+
+const CURRENCY_FORMAT = {
+  JPY: { symbol: '¥', locale: 'ja-JP', digits: 0 },
+  HKD: { symbol: 'HK$', locale: 'zh-HK', digits: 1 }
+};
 
 const state = {
   view: 'grid',       // 'grid' | 'list'
   search: '',
   series: '',         // 篩選系列
   sort: 'default',    // 'default' | 'price-asc' | 'price-desc'
+  currency: 'JPY',    // 'JPY' | 'HKD'
   data: CARD_DATA
 };
 
@@ -19,6 +32,7 @@ const els = {
   search: document.getElementById('search'),
   sort: document.getElementById('sort'),
   seriesFilter: document.getElementById('series-filter'),
+  currencySelect: document.getElementById('currency'),
   viewGrid: document.getElementById('view-grid'),
   viewList: document.getElementById('view-list'),
   themeToggle: document.getElementById('theme-toggle')
@@ -32,8 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function init() {
   initTheme();
   populateSeriesFilter();
+  loadExchangeRate();
   const savedView = getStorage(STORAGE_KEY, 'grid');
+  const savedCurrency = getStorage(CURRENCY_KEY, 'JPY');
   setView(savedView);
+  setCurrency(savedCurrency, false);
   attachListeners();
   render();
 }
@@ -92,6 +109,13 @@ function attachListeners() {
     render();
   });
 
+  if (els.currencySelect) {
+    els.currencySelect.addEventListener('change', (e) => {
+      setCurrency(e.target.value, true);
+      render();
+    });
+  }
+
   els.viewGrid.addEventListener('click', () => {
     setView('grid');
     setStorage(STORAGE_KEY, 'grid');
@@ -112,6 +136,45 @@ function setView(view) {
   els.viewGrid.setAttribute('aria-pressed', String(isGrid));
   els.viewList.classList.toggle('is-active', !isGrid);
   els.viewList.setAttribute('aria-pressed', String(!isGrid));
+}
+
+function setCurrency(currency, save) {
+  if (!CURRENCY_FORMAT[currency]) return;
+  state.currency = currency;
+  if (els.currencySelect) {
+    els.currencySelect.value = currency;
+  }
+  if (save) {
+    setStorage(CURRENCY_KEY, currency);
+  }
+}
+
+function convertPrice(jpy) {
+  return Math.round(jpy * EXCHANGE_RATES[state.currency]);
+}
+
+function formatPrice(jpy) {
+  const amount = convertPrice(jpy);
+  const cfg = CURRENCY_FORMAT[state.currency];
+  return `${cfg.symbol} ${amount.toLocaleString(cfg.locale, {
+    minimumFractionDigits: cfg.digits,
+    maximumFractionDigits: cfg.digits
+  })}`;
+}
+
+function loadExchangeRate() {
+  if (typeof fetch !== 'function') return;
+  fetch('https://api.exchangerate-api.com/v4/latest/JPY')
+    .then((res) => res.json())
+    .then((data) => {
+      if (data && data.rates && data.rates.HKD) {
+        EXCHANGE_RATES.HKD = data.rates.HKD;
+        render();
+      }
+    })
+    .catch((err) => {
+      console.warn('Exchange rate fetch failed:', err);
+    });
 }
 
 function getFilteredCards() {
@@ -199,7 +262,7 @@ function createCardElement(card) {
 
     const priceValue = document.createElement('span');
     priceValue.className = 'price-value';
-    priceValue.textContent = `NT$ ${price.toLocaleString()}`;
+    priceValue.textContent = formatPrice(price);
 
     if (price === minPrice) {
       priceValue.classList.add('price-lowest');
