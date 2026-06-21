@@ -77,7 +77,7 @@ warn "Total cards: " . scalar(@cards) . "\n";
 
 my $data = {
   vendors => [
-    { id => 'a', name => 'A店' },
+    { id => 'a', name => 'Yuyu-tei' },
     { id => 'b', name => 'B店' },
     { id => 'c', name => 'C店' }
   ],

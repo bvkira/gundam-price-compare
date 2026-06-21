@@ -31,7 +31,7 @@
 - 即時搜尋卡牌名稱、編號或系列。
 - 系列篩選下拉選單。
 - 依最低價低到高或高到低排序。
-- 每張卡顯示 A店 / B店 / C店 價格，並以綠色凸顯最低價。
+- 每張卡顯示 Yuyu-tei / B店 / C店 價格，並以綠色凸顯最低價。
 - 顯示官方卡牌圖片。
 - 深色 / 淺色模式切換。
 
@@ -65,7 +65,7 @@ perl scripts/build_card_data.pl > js/data.js
 perl scripts/scrape_yuyutei.pl
 ```
 
-把最新 yuyu-tei 價格同步到網頁的 A店：
+把最新 yuyu-tei 價格同步到網頁的 Yuyu-tei 欄位：
 
 ```bash
 perl scripts/merge_prices.pl
