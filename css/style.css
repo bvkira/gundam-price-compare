@@ -92,6 +92,12 @@ button, input, select {
   color: var(--muted);
 }
 
+.last-updated {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  margin-top: 0.5rem;
+}
+
 .site-main {
   min-height: 60vh;
 }

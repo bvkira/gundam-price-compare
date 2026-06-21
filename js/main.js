@@ -35,7 +35,8 @@ const els = {
   currencySelect: document.getElementById('currency'),
   viewGrid: document.getElementById('view-grid'),
   viewList: document.getElementById('view-list'),
-  themeToggle: document.getElementById('theme-toggle')
+  themeToggle: document.getElementById('theme-toggle'),
+  lastUpdated: document.getElementById('last-updated')
 };
 
 // DOM 載入完成後執行
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function init() {
   initTheme();
   populateSeriesFilter();
+  updateLastUpdated();
   loadExchangeRate();
   const savedView = getStorage(STORAGE_KEY, 'grid');
   const savedCurrency = getStorage(CURRENCY_KEY, 'JPY');
@@ -53,6 +55,28 @@ function init() {
   setCurrency(savedCurrency, false);
   attachListeners();
   render();
+}
+
+function updateLastUpdated() {
+  if (!els.lastUpdated) return;
+  const iso = state.data.lastUpdated;
+  if (!iso) {
+    els.lastUpdated.textContent = '';
+    return;
+  }
+  try {
+    const d = new Date(iso);
+    const formatted = d.toLocaleString('zh-Hant', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    els.lastUpdated.textContent = `Yuyu-tei 價格更新時間：${formatted}`;
+  } catch (e) {
+    els.lastUpdated.textContent = `Yuyu-tei 價格更新時間：${iso}`;
+  }
 }
 
 function initTheme() {

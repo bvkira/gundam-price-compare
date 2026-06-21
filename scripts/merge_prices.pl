@@ -56,6 +56,8 @@ for my $rec (@$prices) {
 
 my $matched = 0;
 my $fallback = 0;
+my $last_updated = '';
+
 for my $card (@{ $data->{cards} }) {
   my $number = normalize_number($card->{number});
   my $rarity = normalize_rarity($card->{rarity});
@@ -65,12 +67,16 @@ for my $card (@{ $data->{cards} }) {
   next unless $rec;
 
   $card->{prices}{a} = $rec->{price_jpy};
+  $last_updated = $rec->{observed_at} if $rec->{observed_at} gt $last_updated;
+
   if ($latest_by_rarity{$key}) {
     $matched++;
   } else {
     $fallback++;
   }
 }
+
+$data->{lastUpdated} = $last_updated || '1970-01-01T00:00:00';
 
 # 寫回 js/data.js
 open my $out, '>', $data_file or die "Cannot write $data_file: $!";
@@ -82,6 +88,7 @@ close $out;
 warn "Updated " . ($matched + $fallback) . " cards with yuyu-tei prices.\n";
 warn "  Exact rarity match: $matched\n";
 warn "  Fallback by number only: $fallback\n";
+warn "  Last updated: $data->{lastUpdated}\n";
 warn "Total cards: " . scalar(@{ $data->{cards} }) . "\n";
 
 sub normalize_number {
