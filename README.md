@@ -65,6 +65,18 @@ perl scripts/build_card_data.pl > js/data.js
 perl scripts/scrape_yuyutei.pl
 ```
 
+把最新 yuyu-tei 價格同步到網頁的 A店：
+
+```bash
+perl scripts/merge_prices.pl
+```
+
+如果要一次完成「抓最新價格 + 同步到網頁」：
+
+```bash
+perl scripts/scrape_yuyutei.pl && perl scripts/merge_prices.pl
+```
+
 ## 注意事項
 
 - yuyu-tei 是日本的卡牌通路，價格為日圓（JPY），且不含運費與關稅。

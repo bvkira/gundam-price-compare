@@ -4,6 +4,8 @@ use warnings;
 use utf8;
 use Encode qw(decode);
 
+use JSON::PP;
+
 binmode(STDOUT, ':utf8');
 
 my @packages = (
@@ -73,36 +75,19 @@ for my $pkg (@packages) {
 
 warn "Total cards: " . scalar(@cards) . "\n";
 
-print "const CARD_DATA = {\n";
-print "  vendors: [\n";
-print "    { id: 'a', name: 'A店' },\n";
-print "    { id: 'b', name: 'B店' },\n";
-print "    { id: 'c', name: 'C店' }\n";
-print "  ],\n";
-print "  cards: [\n";
+my $data = {
+  vendors => [
+    { id => 'a', name => 'A店' },
+    { id => 'b', name => 'B店' },
+    { id => 'c', name => 'C店' }
+  ],
+  cards => \@cards,
+};
 
-for my $i (0 .. $#cards) {
-  my $c = $cards[$i];
-  my $name = js_escape($c->{name});
-  my $series = js_escape($c->{series});
-  my $number = js_escape($c->{number});
-  my $image = js_escape($c->{image});
-  my $id = js_escape($c->{id});
-
-  print "    {\n";
-  print "      id: \"$id\",\n";
-  print "      name: \"$name\",\n";
-  print "      number: \"$number\",\n";
-  print "      series: \"$series\",\n";
-  print "      image: \"$image\",\n";
-  print "      prices: { a: $c->{prices}{a}, b: $c->{prices}{b}, c: $c->{prices}{c} }\n";
-  print "    }";
-  print "," unless $i == $#cards;
-  print "\n";
-}
-
-print "  ]\n";
-print "};\n";
+my $json = JSON::PP->new->pretty(1)->utf8(0)->encode($data);
+print "const CARD_DATA = ";
+print $json;
+print ";\n";
 
 sub generate_prices {
   my ($seed) = @_;
@@ -114,14 +99,4 @@ sub generate_prices {
   my $b = 50 + (($h * 7) % 3000);
   my $c = 50 + (($h * 13) % 3000);
   return { a => $a, b => $b, c => $c };
-}
-
-sub js_escape {
-  my ($s) = @_;
-  $s =~ s/\\/\\\\/g;
-  $s =~ s/"/\\"/g;
-  $s =~ s/\n/\\n/g;
-  $s =~ s/\r/\\r/g;
-  $s =~ s/\t/\\t/g;
-  return $s;
 }
