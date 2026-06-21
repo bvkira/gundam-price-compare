@@ -45,6 +45,7 @@ python -m http.server 8000
 卡牌名稱、編號、圖片來自 [GUNDAM CARD GAME 官方網站](https://www.gundam-gcg.com/zh-tw/cards/index.php)。
 
 - 卡牌資料已預先抓取並轉成 `js/data.js`。
+- 圖片透過 [wsrv.nl](https://wsrv.nl/) proxy 載入，避免官網的跨域限制導致圖片無法顯示。
 - 店家價格目前為示範用假資料，未來可替換為真實市場價格。
 - 如需重新抓取，可執行：
 
