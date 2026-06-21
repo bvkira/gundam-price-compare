@@ -9,6 +9,7 @@ const THEME_KEY = 'gundam-price-compare-theme';
 const state = {
   view: 'grid',       // 'grid' | 'list'
   search: '',
+  series: '',         // 篩選系列
   sort: 'default',    // 'default' | 'price-asc' | 'price-desc'
   data: CARD_DATA
 };
@@ -17,6 +18,7 @@ const els = {
   results: document.getElementById('results'),
   search: document.getElementById('search'),
   sort: document.getElementById('sort'),
+  seriesFilter: document.getElementById('series-filter'),
   viewGrid: document.getElementById('view-grid'),
   viewList: document.getElementById('view-list'),
   themeToggle: document.getElementById('theme-toggle')
@@ -29,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function init() {
   initTheme();
+  populateSeriesFilter();
   const savedView = getStorage(STORAGE_KEY, 'grid');
   setView(savedView);
   attachListeners();
@@ -38,6 +41,21 @@ function init() {
 function initTheme() {
   const isDark = document.documentElement.classList.contains('dark');
   updateThemeButton(isDark);
+}
+
+function populateSeriesFilter() {
+  if (!els.seriesFilter) return;
+  const seriesSet = new Set();
+  state.data.cards.forEach((card) => seriesSet.add(card.series));
+  const sorted = Array.from(seriesSet).sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+  const fragment = document.createDocumentFragment();
+  sorted.forEach((series) => {
+    const option = document.createElement('option');
+    option.value = series;
+    option.textContent = series;
+    fragment.appendChild(option);
+  });
+  els.seriesFilter.appendChild(fragment);
 }
 
 function toggleTheme() {
@@ -61,6 +79,13 @@ function attachListeners() {
     state.search = e.target.value.trim();
     render();
   }, 200));
+
+  if (els.seriesFilter) {
+    els.seriesFilter.addEventListener('change', (e) => {
+      state.series = e.target.value;
+      render();
+    });
+  }
 
   els.sort.addEventListener('change', (e) => {
     state.sort = e.target.value;
@@ -91,12 +116,13 @@ function setView(view) {
 
 function getFilteredCards() {
   const term = state.search.toLowerCase();
-  if (!term) return state.data.cards.slice();
+  const selectedSeries = state.series;
   return state.data.cards.filter((card) => {
-    return (
+    const matchesSearch = !term ||
       card.name.toLowerCase().includes(term) ||
-      card.series.toLowerCase().includes(term)
-    );
+      card.series.toLowerCase().includes(term);
+    const matchesSeries = !selectedSeries || card.series === selectedSeries;
+    return matchesSearch && matchesSeries;
   });
 }
 
