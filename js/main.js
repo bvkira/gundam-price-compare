@@ -264,6 +264,10 @@ function createCardElement(card) {
   title.className = 'card-title';
   title.textContent = card.name;
 
+  const rarity = document.createElement('span');
+  rarity.className = 'card-rarity';
+  rarity.textContent = card.rarity || '-';
+
   const number = document.createElement('p');
   number.className = 'card-number';
   number.textContent = card.number;
@@ -300,6 +304,7 @@ function createCardElement(card) {
   });
 
   body.appendChild(title);
+  body.appendChild(rarity);
   body.appendChild(number);
   body.appendChild(series);
   body.appendChild(priceList);
