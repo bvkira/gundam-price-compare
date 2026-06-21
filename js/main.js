@@ -22,6 +22,7 @@ const state = {
   view: 'grid',       // 'grid' | 'list'
   search: '',
   series: '',         // 篩選系列
+  rarity: '',         // 篩選稀有度
   sort: 'default',    // 'default' | 'price-asc' | 'price-desc'
   currency: 'JPY',    // 'JPY' | 'HKD'
   data: CARD_DATA
@@ -32,6 +33,7 @@ const els = {
   search: document.getElementById('search'),
   sort: document.getElementById('sort'),
   seriesFilter: document.getElementById('series-filter'),
+  rarityFilter: document.getElementById('rarity-filter'),
   currencySelect: document.getElementById('currency'),
   viewGrid: document.getElementById('view-grid'),
   viewList: document.getElementById('view-list'),
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function init() {
   initTheme();
   populateSeriesFilter();
+  populateRarityFilter();
   updateLastUpdated();
   loadExchangeRate();
   const savedView = getStorage(STORAGE_KEY, 'grid');
@@ -55,6 +58,23 @@ function init() {
   setCurrency(savedCurrency, false);
   attachListeners();
   render();
+}
+
+function populateRarityFilter() {
+  if (!els.rarityFilter) return;
+  const raritySet = new Set();
+  state.data.cards.forEach((card) => {
+    if (card.rarity) raritySet.add(card.rarity);
+  });
+  const sorted = Array.from(raritySet).sort((a, b) => a.localeCompare(b, 'en'));
+  const fragment = document.createDocumentFragment();
+  sorted.forEach((rarity) => {
+    const option = document.createElement('option');
+    option.value = rarity;
+    option.textContent = rarity;
+    fragment.appendChild(option);
+  });
+  els.rarityFilter.appendChild(fragment);
 }
 
 function updateLastUpdated() {
@@ -124,6 +144,13 @@ function attachListeners() {
   if (els.seriesFilter) {
     els.seriesFilter.addEventListener('change', (e) => {
       state.series = e.target.value;
+      render();
+    });
+  }
+
+  if (els.rarityFilter) {
+    els.rarityFilter.addEventListener('change', (e) => {
+      state.rarity = e.target.value;
       render();
     });
   }
@@ -204,12 +231,14 @@ function loadExchangeRate() {
 function getFilteredCards() {
   const term = state.search.toLowerCase();
   const selectedSeries = state.series;
+  const selectedRarity = state.rarity;
   return state.data.cards.filter((card) => {
     const matchesSearch = !term ||
       card.name.toLowerCase().includes(term) ||
       card.series.toLowerCase().includes(term);
     const matchesSeries = !selectedSeries || card.series === selectedSeries;
-    return matchesSearch && matchesSeries;
+    const matchesRarity = !selectedRarity || card.rarity === selectedRarity;
+    return matchesSearch && matchesSeries && matchesRarity;
   });
 }
 
