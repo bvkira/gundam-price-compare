@@ -3,60 +3,13 @@
  * 入口檔案
  */
 
-// 假資料：3 間店、6 張卡
-const MOCK_DATA = {
-  vendors: [
-    { id: 'a', name: 'A店' },
-    { id: 'b', name: 'B店' },
-    { id: 'c', name: 'C店' }
-  ],
-  cards: [
-    {
-      id: 1,
-      name: 'RX-78-2 鋼彈',
-      series: '機動戰士鋼彈',
-      prices: { a: 1200, b: 1150, c: 1250 }
-    },
-    {
-      id: 2,
-      name: 'MS-06S 夏亞專用薩克 II',
-      series: '機動戰士鋼彈',
-      prices: { a: 980, b: 1050, c: 920 }
-    },
-    {
-      id: 3,
-      name: 'RX-178 鋼彈 Mk-II',
-      series: '機動戰士 Z 鋼彈',
-      prices: { a: 850, b: 790, c: 880 }
-    },
-    {
-      id: 4,
-      name: 'ZGMF-X10A 自由鋼彈',
-      series: '機動戰士鋼彈 SEED',
-      prices: { a: 1500, b: 1620, c: 1480 }
-    },
-    {
-      id: 5,
-      name: 'MBF-P02 迷惘鋼彈紅色機',
-      series: '機動戰士鋼彈 SEED ASTRAY',
-      prices: { a: 1350, b: 1280, c: 1400 }
-    },
-    {
-      id: 6,
-      name: 'MSN-04 沙薩比',
-      series: '機動戰士鋼彈 逆襲的夏亞',
-      prices: { a: 2100, b: 2050, c: 2300 }
-    }
-  ]
-};
-
 const STORAGE_KEY = 'gundam-price-compare-view';
 
 const state = {
   view: 'grid',       // 'grid' | 'list'
   search: '',
   sort: 'default',    // 'default' | 'price-asc' | 'price-desc'
-  data: MOCK_DATA
+  data: CARD_DATA
 };
 
 const els = {
@@ -160,7 +113,12 @@ function createCardElement(card) {
 
   const image = document.createElement('div');
   image.className = 'card-image';
-  image.textContent = '卡片圖片';
+
+  const img = document.createElement('img');
+  img.src = card.image;
+  img.alt = card.name;
+  img.loading = 'lazy';
+  image.appendChild(img);
 
   const body = document.createElement('div');
   body.className = 'card-body';
@@ -168,6 +126,10 @@ function createCardElement(card) {
   const title = document.createElement('h2');
   title.className = 'card-title';
   title.textContent = card.name;
+
+  const number = document.createElement('p');
+  number.className = 'card-number';
+  number.textContent = card.number;
 
   const series = document.createElement('p');
   series.className = 'card-series';
@@ -201,6 +163,7 @@ function createCardElement(card) {
   });
 
   body.appendChild(title);
+  body.appendChild(number);
   body.appendChild(series);
   body.appendChild(priceList);
   article.appendChild(image);
