@@ -38,6 +38,7 @@ const els = {
   viewGrid: document.getElementById('view-grid'),
   viewList: document.getElementById('view-list'),
   themeToggle: document.getElementById('theme-toggle'),
+  clearFilters: document.getElementById('clear-filters'),
   lastUpdated: document.getElementById('last-updated')
 };
 
@@ -125,6 +126,16 @@ function toggleTheme() {
   updateThemeButton(isDark);
 }
 
+function clearFilters() {
+  state.search = '';
+  state.series = '';
+  state.rarity = '';
+  if (els.search) els.search.value = '';
+  if (els.seriesFilter) els.seriesFilter.value = '';
+  if (els.rarityFilter) els.rarityFilter.value = '';
+  render();
+}
+
 function updateThemeButton(isDark) {
   if (!els.themeToggle) return;
   els.themeToggle.textContent = isDark ? '☀️' : '🌙';
@@ -134,6 +145,10 @@ function updateThemeButton(isDark) {
 function attachListeners() {
   if (els.themeToggle) {
     els.themeToggle.addEventListener('click', toggleTheme);
+  }
+
+  if (els.clearFilters) {
+    els.clearFilters.addEventListener('click', clearFilters);
   }
 
   els.search.addEventListener('input', debounce((e) => {
