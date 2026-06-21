@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鋼彈卡牌比價</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>鋼彈卡牌比價</h1>
+    <p>比較多家店鋪的鋼彈卡牌市場價格</p>
+  </header>
+
+  <main class="site-main">
+    <section class="controls" aria-label="搜尋與排序">
+      <input
+        type="search"
+        id="search"
+        class="search-input"
+        placeholder="搜尋卡牌名稱或系列..."
+        aria-label="搜尋卡牌"
+      >
+
+      <select id="sort" class="sort-select" aria-label="排序">
+        <option value="default">預設排序</option>
+        <option value="price-asc">最低價：低到高</option>
+        <option value="price-desc">最低價：高到低</option>
+      </select>
+
+      <div class="view-toggle" role="group" aria-label="切換檢視模式">
+        <button id="view-grid" class="view-btn is-active" type="button" aria-pressed="true">網格</button>
+        <button id="view-list" class="view-btn" type="button" aria-pressed="false">列表</button>
+      </div>
+    </section>
+
+    <section id="results" class="results grid-view" aria-live="polite" aria-label="比價結果">
+      <!-- 卡片由 JS 動態產生 -->
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 鋼彈卡牌比價</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
