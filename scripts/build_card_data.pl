@@ -49,6 +49,7 @@ for my $pkg (@packages) {
 
     my $image = $src;
     $image =~ s/^\.\.\/\.\.\//https:\/\/www.gundam-gcg.com\//;
+    $image = "https://wsrv.nl/?url=" . $image . "&w=400";
 
     my $name = $alt;
     $name =~ s/^\s+|\s+$//g;
