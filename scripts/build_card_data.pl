@@ -57,6 +57,9 @@ for my $pkg (@packages) {
     $name =~ s/^\s+|\s+$//g;
     $name = '未命名卡片' if $name eq '';
 
+    my $rarity = fetch_rarity($detail_id);
+    select(undef, undef, undef, 0.1);
+
     my $prices = generate_prices($detail_id);
 
     push @cards, {
@@ -64,6 +67,7 @@ for my $pkg (@packages) {
       name   => $name,
       number => $detail_id,
       series => $series,
+      rarity => $rarity,
       image  => $image,
       prices => $prices,
     };
@@ -74,6 +78,23 @@ for my $pkg (@packages) {
 }
 
 warn "Total cards: " . scalar(@cards) . "\n";
+
+sub fetch_rarity {
+  my ($detail_id) = @_;
+  my $url = "https://www.gundam-gcg.com/zh-tw/cards/detail.php?detailSearch=$detail_id";
+  my $html = `curl -s -L "$url"`;
+  return '' unless defined $html && length $html;
+
+  my ($rarity) = $html =~ /<div class="rarity">\s*([^\n<]+)\s*<\/div>/;
+  return normalize_rarity($rarity);
+}
+
+sub normalize_rarity {
+  my ($r) = @_;
+  return '' unless defined $r;
+  $r =~ s/\s+//g;
+  return uc($r);
+}
 
 my $data = {
   vendors => [

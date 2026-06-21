@@ -81,5 +81,7 @@ perl scripts/scrape_yuyutei.pl && perl scripts/merge_prices.pl
 
 ## 注意事項
 
+- 卡牌資料包含稀有度（rarity：LR++ / LR+ / LR / R+ / R / U / C 等）。
+- 與 yuyu-tei 價格對應時，會優先比對「卡號 + 稀有度」，沒有完全對應時才 fallback 到「卡號」。
 - yuyu-tei 是日本的卡牌通路，價格為日圓（JPY），且不含運費與關稅。
 - 請勿過於頻繁執行爬蟲，避免對對方伺服器造成負擔。
